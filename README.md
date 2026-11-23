@@ -1,0 +1,14 @@
+Techs Used:
+1. golang
+2. postgres
+3. migrate
+4. pgx
+5. sqlc
+6. chi
+7. templ
+8. htmx
+9. alpinejs
+10. tailwind
+11. daisyui
+12. pineui
+13. penguineui
