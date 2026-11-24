@@ -1,9 +1,11 @@
 package Components
 
-templ Navbar() {
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/myTypes"
+
+templ Navbar(menuItems []myTypes.MenuItemType) {
 	<div class="navbar bg-base-100 shadow-sm">
 		<div class="navbar-start">
-			@MobileMenu()
+			@MobileMenu(menuItems)
 		</div>
 		<div class="navbar-center">
 			<a class="btn btn-ghost text-xl">daisyUI</a>

@@ -1,31 +1,33 @@
 package Components
 
-templ MobileMenu() {
-<div class="relative"  x-data="{ open: false }" >
-	<button @click="open=true"  class="btn btn-circle">
-		<span class="icon-[material-symbols--menu]"></span>
-	</button>
-	<ul @click.outside="open=false" @show="open" class="absolute top-14 menu bg-base-200 rounded-box w-56">
-		<li><a>Item 1</a></li>
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/myTypes"
+
+templ MobileMenu(menuItems []myTypes.MenuItemType) {
+	<div class="relative" x-data="{ open: false }">
+		<button @click="open=true" class="btn btn-circle">
+			<span class="icon-[material-symbols--menu]"></span>
+		</button>
+		<ul @click.outside="open=false" x-show="open" class="absolute top-14 menu bg-base-200 rounded-box w-56">
+			for _,item:=range menuItems {
+				@RecursiveMenu(item)
+			}
+		</ul>
+	</div>
+}
+
+templ RecursiveMenu(menuItem myTypes.MenuItemType) {
+	if len(menuItem.Children)>0 {
 		<li>
-			<details open>
-				<summary>Parent</summary>
+			<details>
+				<summary>{ menuItem.Title }</summary>
 				<ul>
-					<li><a>Submenu 1</a></li>
-					<li><a>Submenu 2</a></li>
-					<li>
-						<details open>
-							<summary>Parent</summary>
-							<ul>
-								<li><a>Submenu 1</a></li>
-								<li><a>Submenu 2</a></li>
-							</ul>
-						</details>
-					</li>
+					for _,item:=range menuItem.Children {
+						@RecursiveMenu(item)
+					}
 				</ul>
 			</details>
 		</li>
-		<li><a>Item 3</a></li>
-	</ul>
-</div>
+	} else {
+		<li><a href={ menuItem.Slug }>{ menuItem.Title }</a></li>
+	}
 }

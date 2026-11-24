@@ -1,9 +1,11 @@
 package layouts
-import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/web/templates/Components"
 
-templ AdminLayout(title string) {
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/web/templates/Components"
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/myTypes"
+
+templ AdminLayout(title string, menuItems []myTypes.MenuItemType) {
 	@Components.Base(title) {
-		@Components.Navbar()
+		@Components.Navbar(menuItems)
 		{ children... }
 	}
 }
