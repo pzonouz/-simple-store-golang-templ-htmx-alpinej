@@ -1,0 +1,163 @@
+-- name: GetProduct :one
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.category,
+    p.slug,
+    p.image_url,
+    p.count,
+    p.price,
+    p.packing_type,
+    p.packing_coefficient_types,
+    p.is_service,
+    p.created_at,
+    c.name AS category_name,
+	COALESCE (ARRAY_AGG(DISTINCT pf.file_id) FILTER (WHERE pf.file_id IS NOT NULL),'{}')::UUID[] as file_ids
+FROM
+    products AS p
+    LEFT JOIN categories AS c ON p.category = c.id
+    LEFT JOIN products_files AS pf ON pf.product_id=p.id
+    LEFT JOIN files AS f ON pf.file_id=f.id
+WHERE
+    p.id = $1
+GROUP BY p.id,c.name
+LIMIT 1;
+
+-- name: GetProductBySlug :one
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.category,
+    p.slug,
+    p.image_url,
+    p.count,
+    p.price,
+    p.packing_type,
+    p.packing_coefficient_types,
+    p.is_service,
+    p.created_at,
+    c.name AS category_name,
+	COALESCE (ARRAY_AGG(DISTINCT pf.file_id) FILTER (WHERE pf.file_id IS NOT NULL),'{}')::UUID[] as file_ids
+FROM
+    products AS p
+    LEFT JOIN categories AS c ON p.category = c.id
+    LEFT JOIN products_files AS pf ON pf.product_id=p.id
+    LEFT JOIN files AS f ON pf.file_id=f.id
+
+WHERE
+    p.slug = $1
+GROUP BY p.id,c.name
+LIMIT 1;
+
+-- name: ListProducts :many
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.category,
+    p.slug,
+    p.image_url,
+    p.count,
+    p.price,
+    p.packing_type,
+    p.packing_coefficient_types,
+    p.is_service,
+    p.created_at,
+    c.name AS category_name
+FROM
+    products AS p
+    LEFT JOIN categories AS c ON p.category = c.id
+ORDER BY
+    c.name
+LIMIT $1 OFFSET $2;
+
+
+-- name: ListProductsByCategory :many
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.category,
+    p.slug,
+    p.image_url,
+    p.count,
+    p.price,
+    p.packing_type,
+    p.packing_coefficient_types,
+    p.is_service,
+    p.created_at,
+    c.name AS category_name
+FROM
+    products AS p
+    LEFT JOIN categories AS c ON p.category = c.id
+    WHERE c.slug=$1 
+	OR
+	(c.parent in (SELECT id FROM categories WHERE slug=$1))
+ORDER BY
+    c.name;
+    
+-- name: ListProductsByCategoroies :many
+SELECT
+    p.id,
+    p.name,
+    p.description,
+    p.category,
+    p.slug,
+    p.image_url,
+    p.count,
+    p.price,
+    p.packing_type,
+    p.packing_coefficient_types,
+    p.is_service,
+    p.created_at,
+    c.name AS category_name
+FROM products AS p
+JOIN categories AS c ON p.category = c.id
+WHERE c.slug = ANY(sqlc.arg(slugs)::text[])
+   OR c.parent IN (
+        SELECT id FROM categories WHERE slug = ANY(sqlc.arg(slugs)::text[])
+      )
+ORDER BY c.name;
+-- name: CreateProduct :one
+INSERT INTO products(name, description, category, image_url, price, count, discount, slug, packing_type, packing_coefficient_types,is_service)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+RETURNING *;
+
+-- name: InsertIntoProductsFiles :exec
+INSERT INTO products_files (product_id,file_id) SELECT $1,unnest($2::uuid[])
+    ON CONFLICT DO NOTHING;
+
+-- name: InsertIntoProductsParametersValues :exec
+INSERT INTO products_parameters_values (product,parameter,
+    boolean_value,selectable_values,text_value) SELECT $1, $2, $3, $4, $5;
+-- name: UpdateProduct :one
+UPDATE
+    products
+SET
+    name = $2,
+    description = $3,
+    category = $4,
+    image_url = $5,
+    price = $6,
+    count = $7,
+    discount = $8,
+    slug = $9,
+    packing_type = $10,
+    packing_coefficient_types = $11,
+    is_service = $12
+WHERE
+    id = $1
+RETURNING
+    *;
+
+-- name: DeleteProduct :exec
+DELETE FROM products
+WHERE id = $1;
+
+-- name: DeleteProductFiles :exec
+DELETE FROM products_files WHERE product_id = $1;
+
+
+

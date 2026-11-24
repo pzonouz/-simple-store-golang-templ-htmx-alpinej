@@ -1,0 +1,12 @@
+DROP TABLE IF EXISTS users CASCADE;
+
+DROP TABLE IF EXISTS categories CASCADE;
+
+DROP TABLE IF EXISTS products CASCADE;
+
+DROP TABLE IF EXISTS files CASCADE;
+
+DROP TYPE packing_type;
+
+DROP TYPE packing_coefficient_type;
+

@@ -1,4 +1,14 @@
 @import "tailwindcss";
+
+/* Scan your templ files */
+@source "../**/*.templ";
+
+/* Exclude the Tailwind executable and daisyUI bundle files from scanning */
+@source not "./tailwindcss";
+@source not "./daisyui{,*}.mjs";
+
+/* Introduce daisyUI and enable the cupcake theme */
 @plugin "./daisyui.mjs" {
-  themes: light --default, dark --prefersdark, cupcake, dracula;
+  themes: cupcake --default;
 }
+@plugin "@iconify/tailwind4";

@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@iconify-json/material-symbols": "^1.2.101",
+    "prettier": "^3.10.1"
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.158",
+    "@iconify-json/mdi": "^1.2.3",
+    "@iconify/tailwind4": "^1.2.3",
+    "@tailwindcss/cli": "^4.3.5",
+    "tailwindcss": "^4.3.5"
+  }
+}

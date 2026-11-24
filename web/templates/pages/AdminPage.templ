@@ -1,0 +1,10 @@
+package pages
+
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/web/templates/Layouts"
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/myTypes"
+
+templ AdminPage(menuItem []myTypes.MenuItemType) {
+	@layouts.AdminLayout("ادمین") {
+		{ children... }
+	}
+}

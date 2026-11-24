@@ -1,0 +1,17 @@
+package Components
+
+templ Base(title string) {
+	<!DOCTYPE html>
+	<html lang="fa" dir="rtl" data-theme="cupcake">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="/static/css/output.css" rel="stylesheet"/>
+			<script src="/static/js/alpine.min.js" defer></script>
+			<title>{ title }</title>
+		</head>
+		<body class="">
+			{ children... }
+		</body>
+	</html>
+}

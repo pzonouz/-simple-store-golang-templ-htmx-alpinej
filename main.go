@@ -8,20 +8,20 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/internal/routes"
 	"github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/internal/services"
 )
 
-func initDB() *pgx.Conn {
+func initDB() *pgxpool.Pool {
 	connString := "postgres://" + os.Getenv("DATABASE_USER") + ":" + os.Getenv("DATABASE_PASSWORD") + "@" + os.Getenv("DATABASE_HOST") + ":5432/" + os.Getenv("DATABASE_NAME")
-	conn, err := pgx.Connect(context.Background(), connString)
+	conn, err := pgxpool.New(context.TODO(), connString)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
-	defer conn.Close(context.Background())
-	err = conn.Ping(context.Background())
+	defer conn.Close()
+	err = conn.Ping(context.TODO())
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
@@ -34,6 +34,8 @@ func main() {
 	db := initDB()
 	srv := services.NewService(db)
 	mux := chi.NewMux()
+	fs := http.FileServer(http.Dir("web/static"))
+	mux.Handle("/static/*", http.StripPrefix("/static/", fs))
 	routes.MountApp(mux, srv)
 	log.Println("Server runnning on port 8000")
 	err := http.ListenAndServe(":8000", mux)

@@ -1,0 +1,9 @@
+package layouts
+import "github.com/pzonouz/simple-store-golang-templ-htmx-alpinejs/web/templates/Components"
+
+templ AdminLayout(title string) {
+	@Components.Base(title) {
+		@Components.Navbar()
+		{ children... }
+	}
+}

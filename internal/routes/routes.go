@@ -6,6 +6,7 @@ import (
 )
 
 func MountApp(mux *chi.Mux, srv *services.Service) {
-	RegisterHomeRoute(mux)
+	// RegisterHomeRoute(mux)
 	RegisterCategoriesRoute(mux)
+	RegisterAdminRoute(mux)
 }
